@@ -1,0 +1,20 @@
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
+    <script src="aframe-ar.js"></script>
+  </head>
+  <body style="margin:0; overflow:hidden;">
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: true;">
+      <a-entity light="type: ambient; intensity: 0.5"></a-entity>
+      <a-entity light="type: directional; intensity: 0.8" position="1 2 1"></a-entity>
+      <a-marker type="pattern" url="markers/moon2.patt">
+        <a-entity 
+          gltf-model="moon2.glb"
+          scale="0.05 0.05 0.05"
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
+        </a-entity>
+      </a-marker>
+      <a-entity camera></a-entity>
+    </a-scene>
+  </body>
+</html>
