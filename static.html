@@ -7,14 +7,14 @@
     <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: true;">
       <a-entity light="type: ambient; intensity: 0.5"></a-entity>
       <a-entity light="type: directional; intensity: 0.8" position="1 2 1"></a-entity>
-      <a-marker type="pattern" url="markers/moon2.patt">
+      <a-entity camera>
         <a-entity 
-          gltf-model="moon2.glb"
-          scale="0.05 0.05 0.05"
-          animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
+          gltf-model="models/moon2.glb"
+          scale="0.2 0.2 0.2"
+          position="0 0 -2"
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 100000; easing: linear">
         </a-entity>
-      </a-marker>
-      <a-entity camera></a-entity>
+      </a-entity>
     </a-scene>
   </body>
 </html>
