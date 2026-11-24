@@ -2,29 +2,81 @@
   <head>
     <script src="vendor/aframe/aframe.min.js"></script>
     <script src="vendor/aframe/aframe-ar.js"></script>
+    <style>.a-enter-vr, .a-enter-ar, .a-orientation-modal { display: none !important; }</style>
+    <script>
+      // Orden de dibujo fijo (atras -> adelante) para las capas del logo: evita flashes oscuros
+      AFRAME.registerComponent('render-order', {
+        schema: { type: 'int' },
+        init: function () {
+          var n = this.data, el = this.el;
+          var apply = function () { el.object3D.traverse(function (o) { o.renderOrder = n; }); };
+          apply(); el.addEventListener('loaded', apply); el.addEventListener('materialtextureloaded', apply);
+        }
+      });
+      // Mantiene el modelo visible unos ms despues de perder el marcador (anti-parpadeo)
+      AFRAME.registerComponent('hold-marker', {
+        schema: { marker: { type: 'selector' }, hold: { default: 700 } },
+        init: function () { this.last = -1e9; },
+        tick: function (t) {
+          var m = this.data.marker, o = this.el.object3D;
+          if (!m) return;
+          if (m.object3D.visible) {
+            m.object3D.updateMatrix();
+            m.object3D.matrix.decompose(o.position, o.quaternion, o.scale);
+            this.last = t;
+          }
+          o.visible = (t - this.last) < this.data.hold;
+        }
+      });
+    </script>
   </head>
   <body style="margin:0; overflow:hidden;">
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: true;">
+    <a-scene embedded vr-mode-ui="enabled: false" arjs="sourceType: webcam; canvasWidth: 960; canvasHeight: 720; detectionMode: mono; maxDetectionRate: 60; debugUIEnabled: false;">
       <a-entity light="type: ambient; intensity: 0.5"></a-entity>
       <a-entity light="type: directional; intensity: 0.8" position="1 2 1"></a-entity>
-      <a-marker type="pattern" url="markers/LogoDedaloGLB.patt"
-        smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5">
-        <a-entity 
+      <a-marker id="m-dedalo" type="pattern" url="markers/LogoDedaloGLB.patt"
+        smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5"></a-marker>
+      <a-entity hold-marker="marker: #m-dedalo" visible="false">
+        <a-entity
           gltf-model="models/LogoDedaloGLB.glb"
-          scale="0.1 0.1 0.1"
-          position="0 -30 0"
+          scale="0.015 0.015 0.015"
+          position="0 0.05 0.22"
           rotation="-90 0 0">
         </a-entity>
-      </a-marker>      
-      <a-marker type="pattern" url="markers/moon2.patt"
-        smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5">
-        <a-entity 
+      </a-entity>
+      <a-marker id="m-moon" type="pattern" url="markers/moon2.patt"
+        smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5"></a-marker>
+      <a-entity hold-marker="marker: #m-moon" visible="false">
+        <a-entity
           gltf-model="models/moon2.glb"
           scale="0.5 0.5 0.5"
           position="0 0 0"
           animation="property: rotation; to: 0 0 -360; loop: true; dur: 10000; easing: linear">
         </a-entity>
-      </a-marker>      
+      </a-entity>
+      <a-marker id="m-cimes" type="pattern" url="markers/cimes.patt"
+        smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5"></a-marker>
+      <a-entity hold-marker="marker: #m-cimes" visible="false">
+        <!-- Logo "3D": capas apiladas del logo recortado -->
+        <a-entity>
+          <a-image src="cimes-alpha.png" width="1.4" height="1.317" rotation="-90 0 0" position="0 0.300 0" render-order="0" material="shader: flat; transparent: true; depthWrite: false; color: #0d4682; side: double"></a-image>
+          <a-image src="cimes-alpha.png" width="1.4" height="1.317" rotation="-90 0 0" position="0 0.315 0" render-order="1" material="shader: flat; transparent: true; depthWrite: false; color: #0e4a86; side: double"></a-image>
+          <a-image src="cimes-alpha.png" width="1.4" height="1.317" rotation="-90 0 0" position="0 0.329 0" render-order="2" material="shader: flat; transparent: true; depthWrite: false; color: #104f8b; side: double"></a-image>
+          <a-image src="cimes-alpha.png" width="1.4" height="1.317" rotation="-90 0 0" position="0 0.344 0" render-order="3" material="shader: flat; transparent: true; depthWrite: false; color: #125490; side: double"></a-image>
+          <a-image src="cimes-alpha.png" width="1.4" height="1.317" rotation="-90 0 0" position="0 0.359 0" render-order="4" material="shader: flat; transparent: true; depthWrite: false; color: #135894; side: double"></a-image>
+          <a-image src="cimes-alpha.png" width="1.4" height="1.317" rotation="-90 0 0" position="0 0.373 0" render-order="5" material="shader: flat; transparent: true; depthWrite: false; color: #155d99; side: double"></a-image>
+          <a-image src="cimes-alpha.png" width="1.4" height="1.317" rotation="-90 0 0" position="0 0.388 0" render-order="6" material="shader: flat; transparent: true; depthWrite: false; color: #16629e; side: double"></a-image>
+          <a-image src="cimes-alpha.png" width="1.4" height="1.317" rotation="-90 0 0" position="0 0.403 0" render-order="7" material="shader: flat; transparent: true; depthWrite: false; color: #1866a2; side: double"></a-image>
+          <a-image src="cimes-alpha.png" width="1.4" height="1.317" rotation="-90 0 0" position="0 0.417 0" render-order="8" material="shader: flat; transparent: true; depthWrite: false; color: #196ba7; side: double"></a-image>
+          <a-image src="cimes-alpha.png" width="1.4" height="1.317" rotation="-90 0 0" position="0 0.432 0" render-order="9" material="shader: flat; transparent: true; depthWrite: false; color: #1b70ac; side: double"></a-image>
+          <a-image src="cimes-alpha.png" width="1.4" height="1.317" rotation="-90 0 0" position="0 0.447 0" render-order="10" material="shader: flat; transparent: true; depthWrite: false; color: #1c74b0; side: double"></a-image>
+          <a-image src="cimes-alpha.png" width="1.4" height="1.317" rotation="-90 0 0" position="0 0.461 0" render-order="11" material="shader: flat; transparent: true; depthWrite: false; color: #1e79b5; side: double"></a-image>
+          <a-image src="cimes-alpha.png" width="1.4" height="1.317" rotation="-90 0 0" position="0 0.476 0" render-order="12" material="shader: flat; transparent: true; depthWrite: false; color: #207eba; side: double"></a-image>
+          <a-image src="cimes-alpha.png" width="1.4" height="1.317" rotation="-90 0 0" position="0 0.491 0" render-order="13" material="shader: flat; transparent: true; depthWrite: false; color: #2182be; side: double"></a-image>
+          <a-image src="cimes-alpha.png" width="1.4" height="1.317" rotation="-90 0 0" position="0 0.505 0" render-order="14" material="shader: flat; transparent: true; depthWrite: false; color: #2387c3; side: double"></a-image>
+          <a-image src="cimes-alpha.png" width="1.4" height="1.317" rotation="-90 0 0" position="0 0.520 0" render-order="15" material="shader: flat; transparent: true; depthWrite: false; color: #ffffff; side: double"></a-image>
+        </a-entity>
+      </a-entity>
       <a-entity camera></a-entity>
     </a-scene>
   </body>
